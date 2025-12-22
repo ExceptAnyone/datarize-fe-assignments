@@ -48,6 +48,8 @@ export function CustomerListSection() {
   // 클라이언트 사이드 정렬
   // API가 totalAmount만 정렬하므로, id와 count는 클라이언트에서 정렬
   const sortedCustomers = useMemo(() => {
+    if (!customers) return []
+
     // API가 이미 totalAmount로 정렬한 경우 그대로 반환
     if (sortBy === 'totalAmount') {
       return customers

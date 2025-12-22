@@ -1,10 +1,8 @@
-import { Suspense } from 'react'
 import styled from '@emotion/styled'
 import { Container } from '../layouts/Container/Container'
 import { Section } from '../layouts/Section/Section'
 import { PurchaseFrequencySection } from '../domains/purchase/components/PurchaseFrequencySection'
 import { CustomerListSection } from '../domains/customer/components/CustomerListSection'
-import { LoadingSpinner } from '../components/LoadingSpinner/LoadingSpinner'
 
 /**
  * 쇼핑몰 구매 데이터 대시보드 메인 페이지
@@ -15,24 +13,15 @@ export function DashboardPage() {
     <Container maxWidth="xl">
       <Header>
         <Title>쇼핑몰 구매 데이터 대시보드</Title>
-        <Subtitle>2024년 7월 분석</Subtitle>
       </Header>
 
       <Section spacing="lg">
         <PurchaseFrequencySection />
       </Section>
 
-      <Suspense
-        fallback={
-          <LoadingFallback>
-            <LoadingSpinner size="lg" />
-          </LoadingFallback>
-        }
-      >
-        <Section spacing="lg">
-          <CustomerListSection />
-        </Section>
-      </Suspense>
+      <Section spacing="lg">
+        <CustomerListSection />
+      </Section>
     </Container>
   )
 }
@@ -46,17 +35,4 @@ const Title = styled.h1`
   font-weight: ${({ theme }) => theme.typography.fontWeight.bold};
   color: ${({ theme }) => theme.colors.text.primary};
   margin: 0 0 ${({ theme }) => theme.spacing.sm} 0;
-`
-
-const Subtitle = styled.p`
-  font-size: ${({ theme }) => theme.typography.fontSize.lg};
-  color: ${({ theme }) => theme.colors.text.secondary};
-  margin: 0;
-`
-
-const LoadingFallback = styled.div`
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  min-height: 400px;
 `
