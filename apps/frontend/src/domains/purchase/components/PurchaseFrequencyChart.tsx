@@ -3,28 +3,7 @@ import { BarChart } from '../../../components/Chart/BarChart'
 import { LoadingSpinner } from '../../../components/LoadingSpinner/LoadingSpinner'
 import { ErrorMessage } from '../../../components/ErrorMessage/ErrorMessage'
 import type { PurchaseFrequencyData } from '../api/purchaseFrequency'
-
-/**
- * 가격 범위를 사용자 친화적인 레이블로 변환
- * @param range - 백엔드에서 받은 가격 범위 (예: "0 - 20000", "20001 - 30000")
- * @returns 사용자 친화적인 레이블 (예: "2만원 이하", "2만원대")
- */
-function formatPriceRange(range: string): string {
-  // "0 - 20000" 형태를 파싱
-  const [minStr, maxStr] = range.split(' - ').map((s) => s.trim())
-  const min = parseInt(minStr, 10)
-  const max = parseInt(maxStr, 10)
-
-  if (min === 0 && max <= 20000) {
-    return '2만원 이하'
-  } else if (max >= 100001) {
-    return '10만원 이상'
-  } else {
-    // 2만원대, 3만원대 등
-    const rangeInManWon = Math.floor(min / 10000)
-    return `${rangeInManWon}만원대`
-  }
-}
+import { formatPriceRange } from '../utils/formatPriceRange'
 
 interface PurchaseFrequencyChartProps {
   /** 차트 데이터 */
