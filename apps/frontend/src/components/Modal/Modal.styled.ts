@@ -1,5 +1,5 @@
-import styled from '@emotion/styled';
-import { keyframes } from '@emotion/react';
+import styled from '@emotion/styled'
+import { keyframes } from '@emotion/react'
 
 // 페이드인 애니메이션
 const fadeIn = keyframes`
@@ -9,7 +9,7 @@ const fadeIn = keyframes`
   to {
     opacity: 1;
   }
-`;
+`
 
 // 스케일업 애니메이션
 const scaleUp = keyframes`
@@ -21,10 +21,10 @@ const scaleUp = keyframes`
     opacity: 1;
     transform: scale(1);
   }
-`;
+`
 
 interface ModalOverlayProps {
-  open: boolean;
+  open: boolean
 }
 
 export const ModalOverlay = styled.div<ModalOverlayProps>`
@@ -40,19 +40,20 @@ export const ModalOverlay = styled.div<ModalOverlayProps>`
   z-index: 1000;
   animation: ${fadeIn} 0.2s ease-in-out;
   padding: ${({ theme }) => theme.spacing.md};
-`;
+`
 
 interface ModalContentProps {
-  size: 'sm' | 'md' | 'lg';
+  size: 'sm' | 'md' | 'lg'
 }
 
 const sizeMap = {
   sm: '400px',
   md: '600px',
   lg: '800px',
-};
+}
 
 export const ModalContent = styled.div<ModalContentProps>`
+  position: relative;
   background-color: ${({ theme }) => theme.colors.background.primary};
   border-radius: ${({ theme }) => theme.borderRadius.lg};
   box-shadow: ${({ theme }) => theme.shadows.xl};
@@ -60,8 +61,9 @@ export const ModalContent = styled.div<ModalContentProps>`
   width: 100%;
   max-height: 90vh;
   overflow-y: auto;
+  z-index: 1001;
   animation: ${scaleUp} 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-`;
+`
 
 export const ModalHeader = styled.div`
   display: flex;
@@ -69,14 +71,14 @@ export const ModalHeader = styled.div`
   align-items: center;
   padding: ${({ theme }) => theme.spacing.lg};
   border-bottom: 1px solid ${({ theme }) => theme.colors.border.default};
-`;
+`
 
 export const ModalTitle = styled.h2`
   margin: 0;
   font-size: ${({ theme }) => theme.typography.fontSize['2xl']};
   font-weight: ${({ theme }) => theme.typography.fontWeight.semibold};
   color: ${({ theme }) => theme.colors.text.primary};
-`;
+`
 
 export const ModalCloseButton = styled.button`
   background: none;
@@ -91,11 +93,11 @@ export const ModalCloseButton = styled.button`
   &:hover {
     color: ${({ theme }) => theme.colors.text.primary};
   }
-`;
+`
 
 export const ModalBody = styled.div`
   padding: ${({ theme }) => theme.spacing.lg};
-`;
+`
 
 export const ModalFooter = styled.div`
   display: flex;
@@ -103,4 +105,4 @@ export const ModalFooter = styled.div`
   gap: ${({ theme }) => theme.spacing.sm};
   padding: ${({ theme }) => theme.spacing.lg};
   border-top: 1px solid ${({ theme }) => theme.colors.border.default};
-`;
+`
