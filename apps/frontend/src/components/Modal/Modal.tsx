@@ -34,11 +34,41 @@ function useModalContext() {
 interface ModalRootProps {
   children: ReactNode
   defaultOpen?: boolean
+  /** Controlled 모드: 외부에서 isOpen 상태 제어 */
+  isOpen?: boolean
+  /** Controlled 모드: 외부에서 onClose 콜백 제어 */
+  onOpenChange?: (open: boolean) => void
   size?: 'sm' | 'md' | 'lg'
 }
 
-function ModalRoot({ children, defaultOpen = false, size = 'md' }: ModalRootProps) {
-  const { value: isOpen, setTrue: open, setFalse: close } = useBoolean(defaultOpen)
+function ModalRoot({
+  children,
+  defaultOpen = false,
+  isOpen: controlledOpen,
+  onOpenChange,
+  size = 'md',
+}: ModalRootProps) {
+  const { value: internalOpen, setTrue: internalSetOpen, setFalse: internalSetClose } = useBoolean(defaultOpen)
+
+  // Controlled vs Uncontrolled 모드
+  const isControlled = controlledOpen !== undefined
+  const isOpen = isControlled ? controlledOpen : internalOpen
+
+  const open = () => {
+    if (isControlled) {
+      onOpenChange?.(true)
+    } else {
+      internalSetOpen()
+    }
+  }
+
+  const close = () => {
+    if (isControlled) {
+      onOpenChange?.(false)
+    } else {
+      internalSetClose()
+    }
+  }
 
   return <ModalContext.Provider value={{ isOpen, open, close, size }}>{children}</ModalContext.Provider>
 }

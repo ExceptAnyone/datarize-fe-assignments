@@ -81,7 +81,7 @@ export function CustomerDetailModal({ isOpen, onClose, customerId, customerName 
   if (!isOpen) return null
 
   return (
-    <Modal defaultOpen={true} size="lg">
+    <Modal isOpen={isOpen} onOpenChange={(open) => !open && onClose()} size="lg">
       <Modal.Portal>
         <Modal.Overlay>
           <Modal.Content>
