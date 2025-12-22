@@ -22,12 +22,19 @@ interface DateRangeFilterProps {
  * 시작/종료 날짜를 선택할 수 있는 DatePicker 2개와 초기화 버튼 제공
  */
 export function DateRangeFilter({ from, to, onFromChange, onToChange, onReset, isValid = true }: DateRangeFilterProps) {
+  // 초기화 핸들러 - 날짜 입력값도 함께 초기화
+  const handleReset = () => {
+    onFromChange('')
+    onToChange('')
+    onReset()
+  }
+
   return (
     <FilterContainer>
       <DateInputsWrapper>
         <DatePicker
           label="시작 날짜"
-          value={from}
+          value={from || ''}
           onChange={(e) => onFromChange(e.target.value)}
           max={to} // 종료 날짜 이전까지만 선택 가능
         />
@@ -36,7 +43,7 @@ export function DateRangeFilter({ from, to, onFromChange, onToChange, onReset, i
 
         <DatePicker
           label="종료 날짜"
-          value={to}
+          value={to || ''}
           onChange={(e) => onToChange(e.target.value)}
           min={from} // 시작 날짜 이후만 선택 가능
         />
@@ -45,7 +52,7 @@ export function DateRangeFilter({ from, to, onFromChange, onToChange, onReset, i
       {!isValid && <ErrorText>시작 날짜는 종료 날짜보다 이전이어야 합니다.</ErrorText>}
 
       <ButtonGroup>
-        <Button variant="secondary" size="sm" onClick={onReset}>
+        <Button variant="secondary" size="sm" onClick={handleReset}>
           초기화
         </Button>
       </ButtonGroup>
