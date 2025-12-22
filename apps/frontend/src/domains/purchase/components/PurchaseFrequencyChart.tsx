@@ -16,7 +16,7 @@ function formatPriceRange(range: string): string {
 
   if (min === 0 && max <= 20000) {
     return '2만원 이하'
-  } else if (max >= 100000) {
+  } else if (max >= 100001) {
     return '10만원 이상'
   } else {
     // 2만원대, 3만원대 등
