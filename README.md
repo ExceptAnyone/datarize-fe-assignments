@@ -259,6 +259,26 @@ export function useCustomerSearch() {
 }
 ```
 
+**페이지네이션 (10명 단위)**
+
+```typescript
+// 클라이언트 사이드 페이지네이션
+const pagination = useCustomerPagination({
+  totalItems: sortedCustomers.length,
+  itemsPerPage: 10,
+});
+
+// 검색/정렬 변경 시 첫 페이지로 자동 리셋
+useEffect(() => {
+  pagination.resetPage();
+}, [debouncedTerm, sortBy, sortOrder]);
+
+// 현재 페이지 데이터만 렌더링
+const paginatedCustomers = useMemo(() => {
+  return sortedCustomers.slice(pagination.startIndex, pagination.endIndex);
+}, [sortedCustomers, pagination.startIndex, pagination.endIndex]);
+```
+
 ### 3. 고객 상세 모달
 
 #### 조건부 쿼리 실행
@@ -456,9 +476,10 @@ ISO 8601 날짜 변환 로직 검증
  ✓ formatDateRangeText.test.ts (36 tests) 5ms
  ✓ customers.test.ts (23 tests) 9ms
  ✓ purchaseFrequency.test.ts (27 tests) 9ms
+ ✓ useCustomerPagination.test.ts (24 tests) 21ms
 
- Test Files  4 passed (4)
-      Tests  113 passed (113)
+ Test Files  5 passed (5)
+      Tests  137 passed (137)
    Duration  1.13s
 ```
 
@@ -473,7 +494,30 @@ ISO 8601 날짜 변환 로직 검증
 
 ## ⚡ 성능 최적화 및 사용자 경험
 
-### 1. 로딩 상태 관리 전략
+### 1. 페이지네이션 구현
+
+#### 서버사이드 vs 클라이언트사이드 비교
+
+| 항목                | 서버사이드 페이지네이션              | 클라이언트사이드 페이지네이션 ⭐ (현재) |
+| ------------------- | ------------------------------------ | --------------------------------------- |
+| **데이터 로딩**     | 필요한 페이지만 요청                 | 전체 데이터 한 번에 로딩                |
+| **네트워크 트래픽** | 각 페이지마다 API 호출               | 초기 1회만 호출                         |
+| **응답 속도**       | 네트워크 지연 발생                   | 즉각적 페이지 전환 (캐싱)               |
+| **대용량 데이터**   | ✅ 효율적 (수천~수만 건)             | ❌ 메모리 부담 (수백 건 제한)           |
+| **검색/필터링**     | 서버 부하, 복잡한 쿼리               | ✅ 빠른 응답 (클라이언트 메모리)        |
+| **백엔드 요구사항** | `offset`, `limit` 파라미터 구현 필요 | 전체 목록 API만 필요                    |
+| **구현 복잡도**     | 백엔드/프론트엔드 동시 수정          | ✅ 프론트엔드만 수정                    |
+
+#### 현재 프로젝트 선택: 클라이언트사이드
+
+**이유:**
+
+1. **백엔드 코드 수정 불가 제약**: 과제 요구사항
+2. **데이터 규모 적절**: 메모리 부담 낮음
+3. **빠른 UX**: 검색/정렬 시 즉각 반응
+4. **TanStack Query 캐싱**: 네트워크 호출 최소화
+
+### 2. 로딩 상태 관리 전략
 
 **초기 계획: useSuspenseQuery 전면 사용**
 
@@ -502,7 +546,9 @@ useCustomerPurchases(id, enabled) {
 }
 ```
 
-### 2. 에러 복원력
+### 3. 에러 복원력
+
+### 3. 에러 복원력
 
 **404 에러를 빈 배열로 처리**
 
@@ -523,7 +569,7 @@ export async function fetchCustomers(params?: CustomersParams) {
 }
 ```
 
-### 3. 사용자 피드백
+### 4. 사용자 피드백
 
 **빈 상태 처리**
 
@@ -760,8 +806,9 @@ export function useCustomers(params?: CustomersParams) {
 - ✅ 타입 안정성 확보 (minimatch 에러 해결 포함)
 - ✅ 실용적인 에러 처리 전략 수립
 - ✅ 사용자 경험 중심 설계 (디바운스, 빈 상태, 에러 복원력)
-- ✅ **113개 유닛 테스트로 핵심 로직 검증 (P0 우선순위)**
+- ✅ **137개 유닛 테스트로 핵심 로직 검증 (P0 우선순위)**
 - ✅ **엣지 케이스까지 고려한 철저한 테스트 커버리지**
+- ✅ **클라이언트사이드 페이지네이션으로 빠른 페이지 전환 구현**
 
 ### 배운 점
 
@@ -771,4 +818,13 @@ export function useCustomers(params?: CustomersParams) {
 - **TypeScript 타입 자동 포함 메커니즘**: Stub 패키지 문제 해결 경험
 - **Vitest의 장점**: Vite와의 완벽한 통합, 빠른 테스트 실행
 - **엣지 케이스의 중요성**: 공백 없는 문자열, 시간대 처리, 윤년 등 실제 발생 가능한 케이스 검증
-- **테스트 우선순위 전략**: P0 (앱 안정성) → P1 (비즈니스 로직) → P2 (복잡한 로직) 순으로 테스트
+- **테스트 우선순위 전략**: P0 (앱 안정성) → P1 (비즈니스 로직) → P2 (복잡한 로직) 순으로 테스트- **클라이언트사이드 페이지네이션 선택**: 백엔드 수정 불가 제약 + 데이터 규모 적절 → 빠른 UX 제공 가능
+
+### 개선할 점
+
+- **서버사이드 페이지네이션 전환 필요성**:
+  - 현재는 백엔드 코드 수정 불가 제약으로 클라이언트사이드 구현
+  - 향후 고객 수 증가 시 (1만 명 이상) 서버사이드로 전환 권장
+  - `offset`, `limit` 파라미터 지원 시 네트워크 트래픽 최적화 가능
+- **무한 스크롤 고려**: 모바일 UX 개선을 위해 페이지 버튼 대신 무한 스크롤 검토
+- **가상화 (Virtualization)**: 대용량 테이블 렌더링 성능 향상 (react-window 등)
