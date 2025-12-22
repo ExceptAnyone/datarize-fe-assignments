@@ -18,6 +18,10 @@ export function DashboardPage() {
         <Subtitle>2024년 7월 분석</Subtitle>
       </Header>
 
+      <Section spacing="lg">
+        <PurchaseFrequencySection />
+      </Section>
+
       <Suspense
         fallback={
           <LoadingFallback>
@@ -25,10 +29,6 @@ export function DashboardPage() {
           </LoadingFallback>
         }
       >
-        <Section spacing="lg">
-          <PurchaseFrequencySection />
-        </Section>
-
         <Section spacing="lg">
           <CustomerListSection />
         </Section>

@@ -1,5 +1,6 @@
 import styled from '@emotion/styled'
 import { BarChart } from '../../../components/Chart/BarChart'
+import { LoadingSpinner } from '../../../components/LoadingSpinner/LoadingSpinner'
 import { ErrorMessage } from '../../../components/ErrorMessage/ErrorMessage'
 import type { PurchaseFrequencyData } from '../api/purchaseFrequency'
 
@@ -27,7 +28,9 @@ function formatPriceRange(range: string): string {
 
 interface PurchaseFrequencyChartProps {
   /** 차트 데이터 */
-  data: PurchaseFrequencyData[]
+  data?: PurchaseFrequencyData[]
+  /** 로딩 상태 */
+  isLoading?: boolean
   /** 에러 객체 */
   error?: Error | null
   /** 차트 높이 (px) */
@@ -36,9 +39,18 @@ interface PurchaseFrequencyChartProps {
 
 /**
  * 가격대별 구매 빈도 차트 컴포넌트
- * BarChart를 래핑하여 에러 상태를 처리
+ * BarChart를 래핑하여 로딩/에러 상태를 처리
  */
-export function PurchaseFrequencyChart({ data, error, height = 400 }: PurchaseFrequencyChartProps) {
+export function PurchaseFrequencyChart({ data, isLoading, error, height = 400 }: PurchaseFrequencyChartProps) {
+  // 로딩 상태
+  if (isLoading) {
+    return (
+      <ChartContainer>
+        <LoadingSpinner size="lg" />
+      </ChartContainer>
+    )
+  }
+
   // 에러 상태
   if (error) {
     return (
@@ -49,7 +61,7 @@ export function PurchaseFrequencyChart({ data, error, height = 400 }: PurchaseFr
   }
 
   // 데이터가 없는 경우
-  if (data.length === 0) {
+  if (!data || data.length === 0) {
     return (
       <ChartContainer>
         <EmptyState>
