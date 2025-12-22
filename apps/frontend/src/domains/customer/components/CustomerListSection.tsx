@@ -1,13 +1,15 @@
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useEffect } from 'react'
 import styled from '@emotion/styled'
 import { Card } from '../../../components/Card/Card'
 import { CustomerSearchBar } from './CustomerSearchBar'
 import { CustomerSortControls } from './CustomerSortControls'
 import { CustomerTable } from './CustomerTable'
 import { CustomerDetailModal } from './CustomerDetailModal'
+import { CustomerPagination } from './CustomerPagination'
 import { useCustomers } from '../hooks/useCustomers'
 import { useCustomerSearch } from '../hooks/useCustomerSearch'
 import { useCustomerSort } from '../hooks/useCustomerSort'
+import { useCustomerPagination } from '../hooks/useCustomerPagination'
 
 /**
  * 고객 목록 섹션 컴포넌트
@@ -76,6 +78,23 @@ export function CustomerListSection() {
     return sorted
   }, [customers, sortBy, sortOrder])
 
+  // 페이지네이션 (정렬된 결과 기준)
+  const pagination = useCustomerPagination({
+    totalItems: sortedCustomers.length,
+    itemsPerPage: 10,
+  })
+
+  // 검색 또는 정렬 변경 시 1페이지로 리셋
+  useEffect(() => {
+    pagination.resetPage()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [debouncedTerm, sortBy, sortOrder])
+
+  // 현재 페이지에 표시할 고객 목록 (슬라이싱)
+  const paginatedCustomers = useMemo(() => {
+    return sortedCustomers.slice(pagination.startIndex, pagination.endIndex)
+  }, [sortedCustomers, pagination.startIndex, pagination.endIndex])
+
   // 모달 열기 핸들러
   const handleCustomerClick = (customerId: number) => {
     setSelectedCustomerId(customerId)
@@ -104,7 +123,21 @@ export function CustomerListSection() {
           </ControlsBar>
 
           {/* 고객 테이블 */}
-          <CustomerTable customers={sortedCustomers} error={error} onCustomerClick={handleCustomerClick} />
+          <CustomerTable customers={paginatedCustomers} error={error} onCustomerClick={handleCustomerClick} />
+
+          {/* 페이지네이션 */}
+          {sortedCustomers.length > 0 && (
+            <CustomerPagination
+              currentPage={pagination.currentPage}
+              totalPages={pagination.totalPages}
+              onPageChange={pagination.goToPage}
+              canGoNext={pagination.canGoNext}
+              canGoPrev={pagination.canGoPrev}
+              totalItems={sortedCustomers.length}
+              startIndex={pagination.startIndex}
+              endIndex={pagination.endIndex}
+            />
+          )}
         </Card.Body>
       </Card>
 
