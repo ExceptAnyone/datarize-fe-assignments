@@ -1,9 +1,6 @@
-import { useQuery, UseQueryResult } from '@tanstack/react-query';
-import { purchaseQueryKeys } from '../api/queryKeys';
-import {
-  PurchaseFrequencyData,
-  PurchaseFrequencyParams,
-} from '../api/purchaseFrequency';
+import { useSuspenseQuery, UseSuspenseQueryResult } from '@tanstack/react-query'
+import { purchaseQueryKeys } from '../api/queryKeys'
+import { PurchaseFrequencyData, PurchaseFrequencyParams } from '../api/purchaseFrequency'
 
 /**
  * 가격대별 구매 빈도 데이터를 가져오는 React Query 훅
@@ -11,7 +8,7 @@ import {
  * @returns 구매 빈도 데이터 쿼리 결과
  */
 export function usePurchaseFrequency(
-  params?: PurchaseFrequencyParams
-): UseQueryResult<PurchaseFrequencyData[], Error> {
-  return useQuery(purchaseQueryKeys.frequency(params));
+  params?: PurchaseFrequencyParams,
+): UseSuspenseQueryResult<PurchaseFrequencyData[], Error> {
+  return useSuspenseQuery(purchaseQueryKeys.frequency(params))
 }

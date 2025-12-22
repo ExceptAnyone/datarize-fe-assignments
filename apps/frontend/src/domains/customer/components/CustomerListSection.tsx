@@ -43,13 +43,11 @@ export function CustomerListSection() {
   }, [debouncedTerm, sortBy, sortOrder])
 
   // 고객 목록 가져오기
-  const { data: customers, isLoading, error } = useCustomers(apiParams)
+  const { data: customers, error } = useCustomers(apiParams)
 
   // 클라이언트 사이드 정렬
   // API가 totalAmount만 정렬하므로, id와 count는 클라이언트에서 정렬
   const sortedCustomers = useMemo(() => {
-    if (!customers) return []
-
     // API가 이미 totalAmount로 정렬한 경우 그대로 반환
     if (sortBy === 'totalAmount') {
       return customers
@@ -104,12 +102,7 @@ export function CustomerListSection() {
           </ControlsBar>
 
           {/* 고객 테이블 */}
-          <CustomerTable
-            customers={sortedCustomers}
-            isLoading={isLoading}
-            error={error}
-            onCustomerClick={handleCustomerClick}
-          />
+          <CustomerTable customers={sortedCustomers} error={error} onCustomerClick={handleCustomerClick} />
         </Card.Body>
       </Card>
 

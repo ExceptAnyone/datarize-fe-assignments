@@ -14,7 +14,7 @@ export function PurchaseFrequencySection() {
   const { dateRange, setFromDate, setToDate, resetDateRange, isValid } = useDateRangeFilter()
 
   // 구매 빈도 데이터 가져오기
-  const { data, isLoading, error } = usePurchaseFrequency(dateRange)
+  const { data, error } = usePurchaseFrequency(dateRange)
 
   return (
     <SectionContainer>
@@ -27,7 +27,7 @@ export function PurchaseFrequencySection() {
           <ContentWrapper>
             {/* 차트 영역 */}
             <ChartWrapper>
-              <PurchaseFrequencyChart data={data} isLoading={isLoading} error={error} height={450} />
+              <PurchaseFrequencyChart data={data} error={error} height={450} />
             </ChartWrapper>
 
             {/* 날짜 필터 영역 */}
