@@ -1,4 +1,4 @@
-import { useState, useMemo, useEffect } from 'react'
+import { useMemo } from 'react'
 import styled from '@emotion/styled'
 import { Card } from '../../../components/Card/Card'
 import { CustomerSearchBar } from './CustomerSearchBar'
@@ -10,6 +10,10 @@ import { useCustomers } from '../hooks/useCustomers'
 import { useCustomerSearch } from '../hooks/useCustomerSearch'
 import { useCustomerSort } from '../hooks/useCustomerSort'
 import { useCustomerPagination } from '../hooks/useCustomerPagination'
+import { useSortedCustomers } from '../hooks/useSortedCustomers'
+import { usePaginatedCustomers } from '../hooks/usePaginatedCustomers'
+import { useCustomerModal } from '../hooks/useCustomerModal'
+import { usePaginationReset } from '../hooks/usePaginationReset'
 
 /**
  * 고객 목록 섹션 컴포넌트
@@ -22,8 +26,8 @@ export function CustomerListSection() {
   // 정렬 상태
   const { sortBy, sortOrder, toggleSort } = useCustomerSort()
 
-  // 선택된 고객 ID (모달 표시용)
-  const [selectedCustomerId, setSelectedCustomerId] = useState<number | null>(null)
+  // 모달 상태
+  const { selectedCustomerId, isOpen, openModal, closeModal } = useCustomerModal()
 
   // API 파라미터 구성
   // API가 'asc'/'desc'를 구매 금액 기준 정렬로 사용하므로,
@@ -48,35 +52,7 @@ export function CustomerListSection() {
   const { data: customers, error } = useCustomers(apiParams)
 
   // 클라이언트 사이드 정렬
-  // API가 totalAmount만 정렬하므로, id와 count는 클라이언트에서 정렬
-  const sortedCustomers = useMemo(() => {
-    if (!customers) return []
-
-    // API가 이미 totalAmount로 정렬한 경우 그대로 반환
-    if (sortBy === 'totalAmount') {
-      return customers
-    }
-
-    // 클라이언트 사이드 정렬
-    const sorted = [...customers].sort((a, b) => {
-      let comparison = 0
-
-      switch (sortBy) {
-        case 'id':
-          comparison = a.id - b.id
-          break
-        case 'count':
-          comparison = a.count - b.count
-          break
-        default:
-          return 0
-      }
-
-      return sortOrder === 'asc' ? comparison : -comparison
-    })
-
-    return sorted
-  }, [customers, sortBy, sortOrder])
+  const sortedCustomers = useSortedCustomers({ customers, sortBy, sortOrder })
 
   // 페이지네이션 (정렬된 결과 기준)
   const pagination = useCustomerPagination({
@@ -85,25 +61,17 @@ export function CustomerListSection() {
   })
 
   // 검색 또는 정렬 변경 시 1페이지로 리셋
-  useEffect(() => {
-    pagination.resetPage()
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [debouncedTerm, sortBy, sortOrder])
+  usePaginationReset({
+    resetPage: pagination.resetPage,
+    dependencies: [debouncedTerm, sortBy, sortOrder],
+  })
 
-  // 현재 페이지에 표시할 고객 목록 (슬라이싱)
-  const paginatedCustomers = useMemo(() => {
-    return sortedCustomers.slice(pagination.startIndex, pagination.endIndex)
-  }, [sortedCustomers, pagination.startIndex, pagination.endIndex])
-
-  // 모달 열기 핸들러
-  const handleCustomerClick = (customerId: number) => {
-    setSelectedCustomerId(customerId)
-  }
-
-  // 모달 닫기 핸들러
-  const handleCloseModal = () => {
-    setSelectedCustomerId(null)
-  }
+  // 현재 페이지에 표시할 고객 목록
+  const paginatedCustomers = usePaginatedCustomers({
+    customers: sortedCustomers,
+    startIndex: pagination.startIndex,
+    endIndex: pagination.endIndex,
+  })
 
   // 선택된 고객 정보 찾기 (모달 타이틀용)
   const selectedCustomer = sortedCustomers.find((customer) => customer.id === selectedCustomerId)
@@ -123,7 +91,7 @@ export function CustomerListSection() {
           </ControlsBar>
 
           {/* 고객 테이블 */}
-          <CustomerTable customers={paginatedCustomers} error={error} onCustomerClick={handleCustomerClick} />
+          <CustomerTable customers={paginatedCustomers} error={error} onCustomerClick={openModal} />
 
           {/* 페이지네이션 */}
           {sortedCustomers.length > 0 && (
@@ -143,8 +111,8 @@ export function CustomerListSection() {
 
       {/* 고객 상세 모달 */}
       <CustomerDetailModal
-        isOpen={!!selectedCustomerId}
-        onClose={handleCloseModal}
+        isOpen={isOpen}
+        onClose={closeModal}
         customerId={selectedCustomerId}
         customerName={selectedCustomer?.name}
       />

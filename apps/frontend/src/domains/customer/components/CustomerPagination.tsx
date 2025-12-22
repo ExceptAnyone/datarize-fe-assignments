@@ -1,4 +1,5 @@
 import styled from '@emotion/styled'
+import { getPageNumbers } from '../utils/pagination'
 
 interface CustomerPaginationProps {
   /** 현재 페이지 번호 */
@@ -33,51 +34,7 @@ export function CustomerPagination({
   startIndex,
   endIndex,
 }: CustomerPaginationProps) {
-  /**
-   * 표시할 페이지 번호 계산
-   * 예: 1 ... 5 6 [7] 8 9 ... 20
-   */
-  const getPageNumbers = (): (number | string)[] => {
-    if (totalPages <= 7) {
-      // 7페이지 이하면 모두 표시
-      return Array.from({ length: totalPages }, (_, i) => i + 1)
-    }
-
-    const delta = 2 // 현재 페이지 좌우로 보여줄 개수
-    const range: number[] = []
-    const withEllipsis: (number | string)[] = []
-
-    // 현재 페이지 주변 범위 계산
-    const start = Math.max(2, currentPage - delta)
-    const end = Math.min(totalPages - 1, currentPage + delta)
-
-    // 첫 페이지는 항상 포함
-    range.push(1)
-
-    // 중간 페이지들
-    for (let i = start; i <= end; i++) {
-      range.push(i)
-    }
-
-    // 마지막 페이지는 항상 포함
-    if (totalPages > 1) {
-      range.push(totalPages)
-    }
-
-    // 생략 표시(...) 추가
-    let prev = 0
-    range.forEach((page) => {
-      if (page - prev > 1) {
-        withEllipsis.push('...')
-      }
-      withEllipsis.push(page)
-      prev = page
-    })
-
-    return withEllipsis
-  }
-
-  const pageNumbers = getPageNumbers()
+  const pageNumbers = getPageNumbers(currentPage, totalPages)
 
   // 아이템이 없으면 페이지네이션 숨김
   if (totalItems === 0) {
