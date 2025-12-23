@@ -15,6 +15,9 @@ import { usePaginatedCustomers } from '../hooks/usePaginatedCustomers'
 import { useCustomerModal } from '../hooks/useCustomerModal'
 import { usePaginationReset } from '../hooks/usePaginationReset'
 
+/** 고객 목록 페이지당 표시 개수 */
+const CUSTOMERS_PER_PAGE = 10
+
 /**
  * 고객 목록 섹션 컴포넌트
  * 검색, 정렬, 테이블, 상세 모달을 통합하여 관리합니다.
@@ -57,7 +60,7 @@ export function CustomerListSection() {
   // 페이지네이션 (정렬된 결과 기준)
   const pagination = useCustomerPagination({
     totalItems: sortedCustomers.length,
-    itemsPerPage: 10,
+    itemsPerPage: CUSTOMERS_PER_PAGE,
   })
 
   // 검색 또는 정렬 변경 시 1페이지로 리셋

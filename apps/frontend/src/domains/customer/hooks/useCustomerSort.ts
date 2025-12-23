@@ -7,6 +7,15 @@ export type SortField = 'id' | 'count' | 'totalAmount'
 /** 정렬 순서 타입 */
 export type SortOrder = 'asc' | 'desc'
 
+export interface UseCustomerSortReturn {
+  /** 현재 정렬 필드 */
+  sortBy: SortField
+  /** 현재 정렬 순서 */
+  sortOrder: SortOrder
+  /** 정렬 토글 함수 */
+  toggleSort: (field: SortField) => void
+}
+
 /**
  * 고객 정렬 훅
  * 정렬 필드와 순서를 관리합니다.
@@ -14,7 +23,7 @@ export type SortOrder = 'asc' | 'desc'
  *
  * @returns 정렬 상태 및 핸들러
  */
-export function useCustomerSort() {
+export function useCustomerSort(): UseCustomerSortReturn {
   // URL에서 정렬 필드 관리 (기본값: ID)
   const [sortByUrl, setSortByUrl] = useUrlState('sortBy', 'id')
   const sortBy = (sortByUrl as SortField) || 'id'
@@ -46,11 +55,8 @@ export function useCustomerSort() {
   )
 
   return {
-    /** 현재 정렬 필드 */
     sortBy,
-    /** 현재 정렬 순서 */
     sortOrder,
-    /** 정렬 토글 함수 */
     toggleSort,
   }
 }

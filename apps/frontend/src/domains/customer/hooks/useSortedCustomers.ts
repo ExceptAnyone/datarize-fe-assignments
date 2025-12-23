@@ -16,7 +16,7 @@ interface UseSortedCustomersOptions {
  * @param sortOrder - 정렬 순서
  * @returns 정렬된 고객 목록
  */
-export function useSortedCustomers({ customers, sortBy, sortOrder }: UseSortedCustomersOptions) {
+export function useSortedCustomers({ customers, sortBy, sortOrder }: UseSortedCustomersOptions): Customer[] {
   return useMemo(() => {
     if (!customers) return []
 

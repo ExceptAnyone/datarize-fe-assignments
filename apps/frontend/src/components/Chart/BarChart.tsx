@@ -10,6 +10,12 @@ import {
 } from 'recharts'
 import { useTheme } from '@emotion/react'
 
+/** 차트 기본 높이 (픽셀) */
+const DEFAULT_CHART_HEIGHT_PX = 400
+
+/** 바 차트 애니메이션 지속 시간 (밀리초) */
+const BAR_ANIMATION_DURATION_MS = 800
+
 export interface BarChartProps {
   /** 차트 데이터 배열 */
   data: Array<Record<string, string | number>>
@@ -27,7 +33,15 @@ export interface BarChartProps {
   yLabel?: string
 }
 
-export function BarChart({ data, xKey, yKey, barColor, height = 400, xLabel, yLabel }: BarChartProps) {
+export function BarChart({
+  data,
+  xKey,
+  yKey,
+  barColor,
+  height = DEFAULT_CHART_HEIGHT_PX,
+  xLabel,
+  yLabel,
+}: BarChartProps) {
   const theme = useTheme()
 
   const defaultBarColor = theme.colors.primary
@@ -102,7 +116,7 @@ export function BarChart({ data, xKey, yKey, barColor, height = 400, xLabel, yLa
           dataKey={yKey}
           fill={isColorArray ? undefined : barColor || defaultBarColor}
           radius={[8, 8, 0, 0]}
-          animationDuration={800}
+          animationDuration={BAR_ANIMATION_DURATION_MS}
         >
           {isColorArray &&
             data.map((_, index) => <Cell key={`cell-${index}`} fill={barColor[index % barColor.length]} />)}

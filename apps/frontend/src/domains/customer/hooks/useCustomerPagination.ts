@@ -1,6 +1,12 @@
 import { useState, useEffect } from 'react'
 import { useUrlStateNumber } from '../../../lib/url-state/useUrlState'
 
+/** 고객 목록 페이지당 기본 표시 개수 */
+const DEFAULT_ITEMS_PER_PAGE = 10
+
+/** 페이지네이션 시작 페이지 번호 */
+const INITIAL_PAGE_NUMBER = 1
+
 export interface UseCustomerPaginationOptions {
   /** 전체 아이템 수 */
   totalItems: number
@@ -45,8 +51,8 @@ export interface UseCustomerPaginationReturn {
  */
 export function useCustomerPagination({
   totalItems,
-  itemsPerPage = 10,
-  initialPage = 1,
+  itemsPerPage = DEFAULT_ITEMS_PER_PAGE,
+  initialPage = INITIAL_PAGE_NUMBER,
 }: UseCustomerPaginationOptions): UseCustomerPaginationReturn {
   // URL에서 페이지 번호 관리
   const [urlPage, setUrlPage] = useUrlStateNumber('page', initialPage)

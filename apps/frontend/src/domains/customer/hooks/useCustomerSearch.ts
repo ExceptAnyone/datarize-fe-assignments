@@ -1,6 +1,18 @@
 import { useState, useEffect } from 'react'
 import { useUrlState } from '../../../lib/url-state/useUrlState'
 
+/** 검색어 입력 디바운스 지연 시간 (밀리초) */
+const DEFAULT_SEARCH_DEBOUNCE_MS = 300
+
+export interface UseCustomerSearchReturn {
+  /** 현재 입력된 검색어 */
+  searchTerm: string
+  /** 디바운스가 적용된 검색어 (API 호출용) */
+  debouncedTerm: string
+  /** 검색어 변경 핸들러 */
+  setSearchTerm: (term: string) => void
+}
+
 /**
  * 고객 검색 훅
  * 검색어 입력과 디바운스 처리를 관리합니다.
@@ -9,7 +21,7 @@ import { useUrlState } from '../../../lib/url-state/useUrlState'
  * @param debounceMs - 디바운스 지연 시간 (기본값: 300ms)
  * @returns 검색어 상태 및 핸들러
  */
-export function useCustomerSearch(debounceMs = 300) {
+export function useCustomerSearch(debounceMs = DEFAULT_SEARCH_DEBOUNCE_MS): UseCustomerSearchReturn {
   // URL에서 검색어 상태 관리
   const [urlSearchTerm, setUrlSearchTerm] = useUrlState('search', '')
 
@@ -39,11 +51,8 @@ export function useCustomerSearch(debounceMs = 300) {
   }, [searchTerm, debounceMs, setUrlSearchTerm])
 
   return {
-    /** 현재 입력된 검색어 */
     searchTerm,
-    /** 디바운스가 적용된 검색어 (API 호출용) */
     debouncedTerm,
-    /** 검색어 변경 핸들러 */
     setSearchTerm,
   }
 }

@@ -1,6 +1,12 @@
 import styled from '@emotion/styled'
 import { keyframes } from '@emotion/react'
 
+/** 모달 오버레이 페이드인 애니메이션 지속 시간 (초) */
+const OVERLAY_FADE_DURATION_SEC = 0.2
+
+/** 모달 컨텐츠 스케일업 애니메이션 지속 시간 (초) */
+const CONTENT_SCALE_DURATION_SEC = 0.3
+
 // 페이드인 애니메이션
 const fadeIn = keyframes`
   from {
@@ -38,7 +44,7 @@ export const ModalOverlay = styled.div<ModalOverlayProps>`
   justify-content: center;
   align-items: center;
   z-index: 1000;
-  animation: ${fadeIn} 0.2s ease-in-out;
+  animation: ${fadeIn} ${OVERLAY_FADE_DURATION_SEC}s ease-in-out;
   padding: ${({ theme }) => theme.spacing.md};
 `
 
@@ -62,7 +68,7 @@ export const ModalContent = styled.div<ModalContentProps>`
   max-height: 90vh;
   overflow-y: auto;
   z-index: 1001;
-  animation: ${scaleUp} 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  animation: ${scaleUp} ${CONTENT_SCALE_DURATION_SEC}s cubic-bezier(0.4, 0, 0.2, 1);
 `
 
 export const ModalHeader = styled.div`

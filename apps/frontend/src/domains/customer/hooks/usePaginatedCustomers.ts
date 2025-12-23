@@ -15,7 +15,7 @@ interface UsePaginatedCustomersOptions {
  * @param endIndex - 끝 인덱스
  * @returns 현재 페이지에 표시할 고객 목록
  */
-export function usePaginatedCustomers({ customers, startIndex, endIndex }: UsePaginatedCustomersOptions) {
+export function usePaginatedCustomers({ customers, startIndex, endIndex }: UsePaginatedCustomersOptions): Customer[] {
   return useMemo(() => {
     return customers.slice(startIndex, endIndex)
   }, [customers, startIndex, endIndex])

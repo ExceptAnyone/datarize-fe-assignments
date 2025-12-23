@@ -2,6 +2,12 @@
  * 페이지네이션 관련 유틸리티 함수
  */
 
+/** 현재 페이지 좌우로 표시할 페이지 개수 */
+const DEFAULT_PAGE_DELTA = 2
+
+/** 모든 페이지를 표시할 최대 페이지 수 임계값 */
+const FULL_PAGINATION_THRESHOLD = 7
+
 /**
  * 표시할 페이지 번호 배열 계산
  * 예: 1 ... 5 6 [7] 8 9 ... 20
@@ -15,8 +21,12 @@
  * getPageNumbers(7, 20) // [1, '...', 5, 6, 7, 8, 9, '...', 20]
  * getPageNumbers(1, 5) // [1, 2, 3, 4, 5]
  */
-export function getPageNumbers(currentPage: number, totalPages: number, delta: number = 2): (number | string)[] {
-  if (totalPages <= 7) {
+export function getPageNumbers(
+  currentPage: number,
+  totalPages: number,
+  delta: number = DEFAULT_PAGE_DELTA,
+): (number | string)[] {
+  if (totalPages <= FULL_PAGINATION_THRESHOLD) {
     // 7페이지 이하면 모두 표시
     return Array.from({ length: totalPages }, (_, i) => i + 1)
   }

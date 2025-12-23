@@ -17,7 +17,7 @@ interface UsePaginationResetOptions {
  *   dependencies: [searchTerm, sortBy, sortOrder]
  * })
  */
-export function usePaginationReset({ resetPage, dependencies }: UsePaginationResetOptions) {
+export function usePaginationReset({ resetPage, dependencies }: UsePaginationResetOptions): void {
   useEffect(() => {
     resetPage()
     // eslint-disable-next-line react-hooks/exhaustive-deps
